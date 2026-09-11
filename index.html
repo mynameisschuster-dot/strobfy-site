@@ -2199,10 +2199,11 @@ if (typeof module === "object" && typeof module.exports === "object") Object.ass
   .persistent-text-btn:active{background:#171717 !important;padding:16px 14px;}
   .persistent-title-line{display:flex;align-items:center;gap:8px;}
   .persistent-lock-icon{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto;}
-  .persistent-lock-icon[hidden]{display:none !important;}
+  .persistent-lock-icon[hidden],
+  .persistent-benefit[hidden]{display:none !important;}
   .persistent-text-btn .persistent-title-line,
   .persistent-text-btn #persistentLayerIcon{color:#fff;}
-  .persistent-text-btn #persistentLayerIcon{display:block;flex:0 0 auto;font-size:12px;font-weight:600;white-space:nowrap;}
+  .persistent-text-btn #persistentLayerIcon{display:block;flex:0 0 auto;font-size:15px !important;font-weight:600;white-space:nowrap;}
   .persistent-text-btn #persistentLayerTitle{font-size:15px !important;font-weight:600 !important;}
   .persistent-text-btn .persistent-benefit{color:#d4d4d4 !important;}
   .thumb-row img{width:32px;height:32px;object-fit:cover;background:#f5f5f5;border-radius:999px;flex:0 0 auto;}
@@ -2892,11 +2893,11 @@ if (typeof module === "object" && typeof module.exports === "object") Object.ass
       </button>
     </div>
     <div class="menu-body">
-      <button class="menu-row" type="button" onclick="openLegalSection('legal-safety','Photosensitivity Warning')"><span>Photosensitivity Warning</span><span class="arrow">→</span></button>
-      <button class="menu-row" type="button" onclick="openLegalSection('legal-privacy','Privacy Policy')"><span>Privacy Policy</span><span class="arrow">→</span></button>
-      <button class="menu-row" type="button" onclick="openLegalSection('legal-terms','Terms of Use')"><span>Terms of Use</span><span class="arrow">→</span></button>
-      <button class="menu-row" type="button" onclick="openLegalSection('legal-purchases','Purchases &amp; Support')"><span>Purchases &amp; Support</span><span class="arrow">→</span></button>
-      <button class="menu-row" type="button" onclick="openLegalSection('legal-credits','Image Credits')"><span>Image Credits</span><span class="arrow">→</span></button>
+      <button class="menu-row" type="button" onclick="openLegalSection('legal-safety','Photosensitivity Warning')"><span>Photosensitivity Warning</span></button>
+      <button class="menu-row" type="button" onclick="openLegalSection('legal-privacy','Privacy Policy')"><span>Privacy Policy</span></button>
+      <button class="menu-row" type="button" onclick="openLegalSection('legal-terms','Terms of Use')"><span>Terms of Use</span></button>
+      <button class="menu-row" type="button" onclick="openLegalSection('legal-purchases','Purchases &amp; Support')"><span>Purchases &amp; Support</span></button>
+      <button class="menu-row" type="button" onclick="openLegalSection('legal-credits','Image Credits')"><span>Image Credits</span></button>
     </div>
     <div class="menu-footer">© <span id="footerYear"></span> STROBFY</div>
   </div>
@@ -3352,6 +3353,12 @@ if (typeof module === "object" && typeof module.exports === "object") Object.ass
     openDetail('persistent', 'Persistent Text Layer');
   }
 
+  // <svg> does not reflect the .hidden property into an attribute, so the
+  // [hidden] CSS rule never matched and the lock stayed visible after purchase.
+  function setHidden(el, on) {
+    if (el) el.toggleAttribute('hidden', on);
+  }
+
   function updatePersistentLayerIcon() {
     const upgradeNote = document.getElementById('persistentUpgradeNote');
     const title = document.getElementById('persistentLayerTitle');
@@ -3362,14 +3369,14 @@ if (typeof module === "object" && typeof module.exports === "object") Object.ass
     btn.classList.toggle('persistent-text-btn', !persistentTextUnlocked);
     if (!persistentTextUnlocked) {
       title.textContent = 'Persistent Text';
-      lockIcon.hidden = false;
-      benefit.hidden = false;
+      setHidden(lockIcon, false);
+      setHidden(benefit, false);
       document.getElementById('persistentLayerIcon').textContent = displayPrice;
       return;
     }
     title.textContent = 'Persistent Text';
-    lockIcon.hidden = true;
-    benefit.hidden = true;
+    setHidden(lockIcon, true);
+    setHidden(benefit, true);
     const hasPersistentText = fixedLayerToggle.checked && fixedTextInput.value.trim().length > 0;
     document.getElementById('persistentLayerIcon').textContent = hasPersistentText ? '→' : '＋';
   }
@@ -4731,7 +4738,8 @@ if (typeof module === "object" && typeof module.exports === "object") Object.ass
   }
 
   function openLegalSection(sectionId, title) {
-    closeMenu();
+    // The menu stays open underneath: the legal overlay sits above it, so
+    // closing a section drops the user back onto the menu instead of the canvas.
     const overlay = document.getElementById('legalOverlay');
     document.querySelectorAll('.legal-section').forEach(section => {
       section.classList.toggle('is-active', section.id === sectionId);

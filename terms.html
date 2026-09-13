@@ -23,16 +23,24 @@
     margin:0 auto;
     padding:56px 24px calc(80px + env(safe-area-inset-bottom));
   }
+  /* Same lockup as the app: Arial, 16px bold, 7px gap, 6px dot, and the
+     app's own strobe-blink timing. */
   .brand{
     display:inline-flex;align-items:center;gap:7px;
-    font-size:19px;font-weight:400;color:#000;text-decoration:none;
+    font-family:Arial, Helvetica, sans-serif;
+    font-size:16px;font-weight:700;letter-spacing:0;
+    color:#171717;text-decoration:none;
     margin-bottom:56px;
   }
   .brand-dot{
     width:6px;height:6px;border-radius:999px;background:#171717;
-    animation:blink 1.6s steps(1,end) infinite;
+    animation:strobe-blink .2s steps(1) infinite;
   }
-  @keyframes blink{ 0%,49%{opacity:1} 50%,100%{opacity:.15} }
+  @keyframes strobe-blink{
+    0%, 45%{opacity:1;}
+    50%, 95%{opacity:.12;}
+    100%{opacity:1;}
+  }
   @media (prefers-reduced-motion:reduce){ .brand-dot{animation:none} }
 
   h1{ font-size:16px;font-weight:600;margin:0 0 40px;line-height:1.3; }
@@ -57,7 +65,7 @@
   <a class="brand" href="/">STROBFY<span class="brand-dot" aria-hidden="true"></span></a>
 
   <h1>Terms of Use</h1>
-  <p class="meta">Last updated: September 11, 2026</p>
+  <p class="meta">Last updated: September 13, 2026</p>
 
   <p>By downloading, accessing, or using STROBFY, you agree to these Terms of Use and to Apple’s <a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/" target="_blank" rel="noopener noreferrer">Standard Licensed Application End User License Agreement</a>. If you do not agree, do not use the app.</p>
 
@@ -78,19 +86,16 @@
   <h2>4. Local storage and data loss</h2>
   <p>Projects and settings are stored locally on your device. Deleting the app, clearing its data, or losing access to the device may permanently remove unfinished projects. Export anything you want to keep.</p>
 
-  <h2>5. Sample images</h2>
-  <p>The sample images shown before you import your own photos are original photographs by Stefan Schuster and are provided for demonstration purposes only. They remain the property of the photographer and may not be extracted, copied, redistributed, or used outside the app.</p>
-
-  <h2>6. Availability and changes</h2>
+  <h2>5. Availability and changes</h2>
   <p>STROBFY is provided on an “as is” basis. Features may change, and the app may be updated or discontinued. These Terms may be updated when the app’s features or legal requirements change; the current version is available inside the app and on this page.</p>
 
-  <h2>7. Liability</h2>
+  <h2>6. Liability</h2>
   <p>To the extent permitted by law, the developer is not liable for damages arising from your use of the app, including lost projects or exported content. Statutory liability, in particular for injury to life, body or health, or for intent and gross negligence, remains unaffected.</p>
 
-  <h2>8. Governing law</h2>
+  <h2>7. Governing law</h2>
   <p>German law applies, without prejudice to the mandatory consumer protection provisions of the country in which you have your habitual residence.</p>
 
-  <h2>9. Contact</h2>
+  <h2>8. Contact</h2>
   <address>
     Stefan Schuster<br>
     Zu den Mainwiesen 5<br>
@@ -99,7 +104,7 @@
     <a href="mailto:support@strobfy.com">support@strobfy.com</a>
   </address>
 
-  <p class="foot">STROBFY · <a href="/privacy.html">Privacy Policy</a></p>
+  <p class="foot"><a href="/">STROBFY</a> · <a href="/privacy.html">Privacy Policy</a></p>
 </main>
 </body>
 </html>

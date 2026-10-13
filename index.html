@@ -59,7 +59,7 @@
 <body>
 <main class="hero">
   <div class="bg" aria-hidden="true">
-    <video id="loop" muted loop playsinline preload="auto"></video>
+    <video id="loop" autoplay muted loop playsinline webkit-playsinline disablepictureinpicture disableremoteplayback preload="auto"></video>
   </div>
   <div class="shade" aria-hidden="true"></div>
 
@@ -103,6 +103,22 @@
     try{ localStorage.setItem('strobfy.lastLoop',id); }catch(e){}
     return id;
   }
+  // iOS Safari spielt nur stumm + inline automatisch ab. Die Eigenschaften
+  // muessen per JS gesetzt sein, bevor src zugewiesen wird.
+  v.muted=true; v.defaultMuted=true; v.playsInline=true;
+  v.setAttribute('muted',''); v.setAttribute('playsinline',''); v.setAttribute('webkit-playsinline','');
+  function wantPlay(){ return !reduce && btn.getAttribute('aria-pressed')!=='true'; }
+  function tryPlay(){
+    if(!wantPlay()) return;
+    var p=v.play(); if(p&&p.catch) p.catch(function(){});
+  }
+  v.addEventListener('loadeddata',tryPlay);
+  v.addEventListener('canplay',tryPlay);
+  // Rueckfall (z. B. Stromsparmodus): beim ersten Antippen/Scrollen starten
+  ['touchstart','pointerdown','scroll','keydown'].forEach(function(ev){
+    window.addEventListener(ev,function once(){ tryPlay(); window.removeEventListener(ev,once); },{passive:true});
+  });
+  document.addEventListener('visibilitychange',function(){ if(!document.hidden) tryPlay(); });
   function pick(){
     var name=window.innerHeight>window.innerWidth?'portrait':'landscape';
     var key=loopId+'/'+name;
@@ -111,7 +127,8 @@
     var base='assets/loops/'+loopId+'/';
     v.poster=base+'poster-'+name+'.jpg';
     v.src=base+name+'.mp4';
-    if(!reduce && btn.getAttribute('aria-pressed')!=='true'){ var p=v.play(); if(p&&p.catch) p.catch(function(){}); }
+    v.load();
+    tryPlay();
   }
   function setPaused(paused){
     btn.setAttribute('aria-pressed',paused?'true':'false');
